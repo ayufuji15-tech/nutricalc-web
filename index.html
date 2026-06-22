@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NUTRICALC Web</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f766e" />
+
+<style>
+  .login-screen{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:linear-gradient(135deg,#0f766e,#0d9488);
+  }
+  .login-card{
+    width:min(380px,100%);
+    background:#ffffff;
+    border-radius:24px;
+    padding:30px;
+    box-shadow:0 24px 70px rgba(15,118,110,.35);
+    text-align:left;
+  }
+  .login-badge{
+    width:62px;
+    height:62px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 14px;
+    background:#ecfdf5;
+    color:#0f766e;
+    font-weight:800;
+    font-size:24px;
+    border:1px solid #99f6e4;
+  }
+  .login-card h2{
+    margin:0;
+    text-align:center;
+    color:#0f766e;
+    letter-spacing:.04em;
+  }
+  .login-card p{
+    text-align:center;
+    margin:8px 0 22px;
+    color:#475569;
+  }
+  .login-card label{
+    display:block;
+    margin:12px 0 6px;
+    color:#334155;
+    font-weight:700;
+    font-size:14px;
+  }
+  .login-card input{
+    width:100%;
+    box-sizing:border-box;
+    padding:12px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:12px;
+    font-size:15px;
+    outline:none;
+  }
+  .login-card input:focus{
+    border-color:#0f766e;
+    box-shadow:0 0 0 3px rgba(15,118,110,.12);
+  }
+  .login-card button{
+    width:100%;
+    margin-top:18px;
+    padding:12px 16px;
+    border:0;
+    border-radius:14px;
+    background:#0f766e;
+    color:white;
+    font-weight:800;
+    cursor:pointer;
+    font-size:15px;
+  }
+  .login-card button:hover{
+    background:#115e59;
+  }
+  .login-error{
+    min-height:20px;
+    color:#dc2626 !important;
+    font-weight:700;
+    margin:12px 0 0 !important;
+  }
+  .login-card small{
+    display:block;
+    margin-top:10px;
+    text-align:center;
+    color:#64748b;
+  }
+  @media print{
+    .login-screen{display:none !important;}
+  }
+</style>
+</head>
+<body>
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="login-badge">AF</div>
+    <h2>NUTRICALC</h2>
+    <p>Sistem Pendukung Asuhan Gizi Terintegrasi</p>
+
+    <label for="loginUser">Username</label>
+    <input id="loginUser" type="text" autocomplete="username" placeholder="Masukkan username" />
+
+    <label for="loginPass">Password</label>
+    <input id="loginPass" type="password" autocomplete="current-password" placeholder="Masukkan password" />
+
+    <button type="button" onclick="loginNutricalc()">Masuk</button>
+    <p id="loginError" class="login-error"></p>
+    <small>Akses terbatas pengguna internal.</small>
+  </div>
+</div>
+
+<header class="hero">
+  <div><h1>NUTRICALC</h1><p>Sistem Pendukung Asuhan Gizi Terintegrasi</p></div>
+  <div class="hero-actions"><button class="ghost" onclick="location.reload()">Reset</button><button class="ghost" onclick="window.print()">Cetak / Simpan PDF</button><button class="ghost" onclick="logoutNutricalc()">Logout</button></div>
+</header>
+<main class="page">
+<nav class="tabs" aria-label="Navigasi NUTRICALC">
+  <button class="tab-btn active" data-tab="antropometri">Antropometri</button>
+  <button class="tab-btn " data-tab="kebutuhan">Kebutuhan Gizi</button>
+  <button class="tab-btn " data-tab="asupan">Asupan</button>
+  <button class="tab-btn " data-tab="cairan">Cairan</button>
+  <button class="tab-btn " data-tab="pemenuhan">% Pemenuhan</button>
+  <button class="tab-btn " data-tab="diabetes">Diabetes & Insulin</button>
+</nav>
+<section class="tab-panel active" id="tab-antropometri">
+  <div class="section-body">
+<section class="card"><h2>Antropometri Dewasa</h2><div class="grid four">
+<label>Jenis Kelamin<select id="jk"><option>Laki-laki</option><option>Perempuan</option></select></label>
+<label>Usia (tahun)<input id="usia" type="number" value="40"></label>
+<label>LLA/LILA (cm)<input id="lila" type="number" step="0.1"></label>
+<label>Ulna (cm)<input id="ulna" type="number" step="0.1"></label>
+<label>BB (kg)<input id="bb" type="number" step="0.1" value="60"></label>
+<label>TB (cm)<input id="tb" type="number" step="0.1" value="160"></label>
+<label>BB sebelum masuk RS (kg)<input id="bbSebelum" type="number" step="0.1"></label>
+<label>Lingkar betis (cm)<input id="betis" type="number" step="0.1"></label>
+<label>Tinggi lutut (cm)<input id="tl" type="number" step="0.1"></label>
+<label>IMT target untuk BBI<input id="imtTarget" type="number" step="0.1" value="22"></label>
+</div><div class="table-wrap"><table><thead><tr><th>Output</th><th>Hasil</th><th>Satuan</th></tr></thead><tbody id="antroRows"></tbody></table></div></section>
+<section class="card"><h2>Antropometri Anak</h2><div class="grid four">
+<label>Jenis Kelamin<select id="anakJk"><option>Laki-laki</option><option>Perempuan</option></select></label>
+<label>Tanggal lahir<input id="anakTgl" placeholder="dd/mm/yyyy"></label>
+<label>Usia saat ini<input id="anakUsia" readonly></label>
+<label>LLA (cm)<input id="anakLila" type="number" step="0.1"></label>
+<label>Ulna (cm)<input id="anakUlna" type="number" step="0.1"></label>
+<label>Lingkar kepala (cm)<input id="anakLk" type="number" step="0.1"></label>
+<label>BB (kg)<input id="anakBb" type="number" step="0.1"></label>
+<label>PB/TB (cm)<input id="anakTb" type="number" step="0.1"></label>
+</div><h3>Rule of Thumbs</h3><div class="table-wrap"><table><thead><tr><th>Parameter</th><th>Rentang</th><th>Hasil</th></tr></thead><tbody id="anakRuleRows"></tbody></table></div>
+<h3>LILA/U WHO</h3><div class="grid four"><label>Usia 6–60 bulan<input id="muacBulan" type="number"></label><label>Usia 5–19 tahun<input id="muacTahun" type="number"></label><label>LILA (cm)<input id="muacLila" type="number" step="0.1"></label><label>Interpretasi<input id="muacHasil" readonly></label></div>
+<h3>PMA / Koreksi Prematur</h3><div class="grid four"><label>Tgl lahir<input id="pmaTgl" placeholder="dd/mm/yyyy"></label><label>UK lahir (minggu)<input id="pmaGa" type="number" value="36"></label><label>Umur kronologis<input id="pmaKrono" readonly></label><label>Usia koreksi<input id="pmaKoreksi" readonly></label></div><p class="result-line" id="pmaSimpulan">Simpulan: -</p></section>
+  </div>
+</section>
+<section class="tab-panel " id="tab-kebutuhan">
+  <div class="section-body">
+<section class="card"><h2>Kebutuhan Dewasa — Diet Khusus</h2><div class="grid four">
+<label>Jenis Kelamin<select id="dkJk"><option>Laki-laki</option><option>Perempuan</option></select></label><label>BB (kg)<input id="dkBb" type="number" step="0.1" value="57.1"></label><label>Energi (kkal/kgBB)<input id="dkEnergi" type="number" step="0.1" value="35"></label><label>Protein (g/kgBB)<input id="dkProteinKg" type="number" step="0.1" value="0.8"></label><label>Lemak (%)<input id="dkLemakPct" type="number" step="0.1" value="25"></label><label>AF<select id="dkAf" class="af"></select></label><label>SF<select id="dkSf" class="sf"></select></label><label>Koreksi Usia DM<select id="dkKor"><option value="1">Tidak menggunakan</option><option value="0.95">40–59 tahun</option><option value="0.9">60–69 tahun</option><option value="0.8">≥70 tahun</option></select></label>
+</div><div class="mini-results"><div>BMR/TEE <b id="dkE">0</b> kkal</div><div>Protein <b id="dkP">0</b> g</div><div>Lemak <b id="dkL">0</b> g</div><div>KH <b id="dkK">0</b> g</div><button onclick="useNeed('dk')">Gunakan sebagai kebutuhan pasien</button></div></section>
+<section class="card"><h2>Kebutuhan Dewasa — Non Diet Khusus</h2><div class="grid four">
+<label>Jenis Kelamin<select id="ndJk"><option>Laki-laki</option><option>Perempuan</option></select></label><label>Umur (tahun)<input id="ndUsia" type="number" value="40"></label><label>BB saat ini (kg)<input id="ndBb" type="number" step="0.1" value="60"></label><label>TB (cm)<input id="ndTb" type="number" step="0.1" value="160"></label><label>BBI Brocca Modifikasi Asia (kg)<input id="ndBbi" readonly></label><label>% Protein<input id="ndProtPct" type="number" value="15"></label><label>% Lemak<input id="ndLemakPct" type="number" value="25"></label><label>AF<select id="ndAf" class="af"></select></label><label>SF<select id="ndSf" class="sf"></select></label><label>Rumus cepat<select id="fastKkal"><option value="25">25 kkal/kgBBI</option><option value="30" selected>30 kkal/kgBBI</option><option value="35">35 kkal/kgBBI</option></select></label>
+</div><div class="table-wrap"><table><thead><tr><th>Rumus</th><th>BMR</th><th>TEE</th><th>Protein</th><th>Lemak</th><th>KH</th><th></th></tr></thead><tbody id="ndRows"></tbody></table></div></section>
+<section class="card"><h2>Kebutuhan Critical Ill Anak — Schofield</h2><div class="grid four"><label>JK<select id="schJk"><option>Perempuan</option><option>Laki-laki</option></select></label><label>Kategori Usia<select id="schKat"><option value="lt3">&lt; 3 tahun</option><option value="3to10">3–10 tahun</option><option value="10to18">10–18 tahun</option></select></label><label>BB (kg)<input id="schBb" type="number" step="0.1" value="10"></label><label>TB (m)<input id="schTb" type="number" step="0.01" value="0.93"></label><label>Protein (g/kg)<input id="schProtKg" type="number" step="0.1" value="0"></label></div><div class="table-wrap"><table><thead><tr><th>Energi (kkal)</th><th>Protein (gr)</th></tr></thead><tbody id="schRows"></tbody></table></div></section>
+<section class="card"><h2>Kebutuhan Anak Berdasarkan RDA</h2><div class="grid three"><label>Usia<select id="rdaUsia"><option value="120">0–6 bulan</option><option value="110">6–12 bulan</option><option value="100">1–3 tahun</option><option value="90">4–6 tahun</option><option value="80">7–9 tahun</option><option value="60">1–12 tahun</option><option value="40">12–18 tahun</option></select></label><label>BB (kg)<input id="rdaBb" type="number" step="0.1" value="10"></label><label>Protein (g/kg)<input id="rdaProtKg" type="number" step="0.1" value="1.5"></label></div><div class="table-wrap"><table><thead><tr><th>Energi (kkal)</th><th>Protein (gr)</th></tr></thead><tbody id="rdaRows"></tbody></table></div></section>
+<section class="card"><h2>Kebutuhan Anak Ventilator</h2><div class="grid three"><label>Kategori<select id="ventKat"><option value="20,25">Ventilator stabil</option><option value="25,30">Ventilator + stres sedang</option><option value="30,35">Ventilator anak kritis</option></select></label><label>BB (kg)<input id="ventBb" type="number" step="0.1" value="10"></label><label>Protein (g/kg)<input id="ventProtKg" type="number" step="0.1" value="0"></label></div><div class="table-wrap"><table><thead><tr><th>Energi (kkal)</th><th>Protein (gr)</th></tr></thead><tbody id="ventRows"></tbody></table></div></section>
+  </div>
+</section>
+<section class="tab-panel " id="tab-asupan">
+  <div class="section-body">
+<section class="card"><h2>Enteral Dewasa</h2><div class="grid two"><label>Jenis enteral<select id="entDSelect"></select></label><label>Volume (ml)<input id="entDVol" type="number" step="0.1" value="0"></label></div><table class="small"><tbody><tr><td>Energi (kkal)</td><td id="entDE">0,0</td><td>Protein (gr)</td><td id="entDP">0,0</td><td>Lemak (gr)</td><td id="entDL">0,0</td><td>KH (gr)</td><td id="entDK">0,0</td></tr></tbody></table></section>
+<section class="card"><h2>Enteral Anak</h2><div class="grid two"><label>Jenis enteral anak<select id="entASelect"></select></label><label>Volume (ml)<input id="entAVol" type="number" step="0.1" value="0"></label></div><table class="small"><tbody><tr><td>Energi (kkal)</td><td id="entAE">0,0</td><td>Protein (gr)</td><td id="entAP">0,0</td><td>Lemak (gr)</td><td id="entAL">0,0</td><td>KH (gr)</td><td id="entAK">0,0</td></tr></tbody></table></section>
+<section class="card"><h2>Parenteral</h2><div class="grid two"><label>Jenis parenteral<select id="pnSelect"></select></label><label>Volume (ml)<input id="pnVol" type="number" step="0.1" value="0"></label></div><div class="table-wrap"><table><thead><tr><th>Energi (kkal)</th><th>Protein (gr)</th><th>Lemak (gr)</th><th>KH (gr)</th><th>Osmolaritas</th><th>Natrium</th><th>Kalium</th><th>Sediaan</th></tr></thead><tbody><tr><td id="pnE">0,0</td><td id="pnP">0,0</td><td id="pnL">0,0</td><td id="pnK">0,0</td><td id="pnOsm">0,0</td><td id="pnNa">0,0</td><td id="pnKalium">0,0</td><td id="pnSed">-</td></tr></tbody></table></div></section>
+<section class="card"><h2>Diet Oral</h2><div class="grid two"><label>Jenis diet<select id="oralSelect"></select></label><label>Kebutuhan / jumlah<input id="oralJumlah" type="number" step="0.1" value="0"></label></div><table class="small"><tbody><tr><td>Energi (kkal)</td><td id="oralE">0,0</td><td>Protein (gr)</td><td id="oralP">0,0</td><td>Lemak (gr)</td><td id="oralL">0,0</td><td>KH (gr)</td><td id="oralK">0,0</td></tr></tbody></table></section>
+<section class="card"><h2>Recall URT</h2>
+<div class="table-wrap"><table><thead><tr><th>Jenis</th><th>Jumlah/hari</th><th>Energi (kkal)</th><th>Protein (gr)</th><th>Lemak (gr)</th><th>KH (gr)</th></tr></thead><tbody id="recallRows"></tbody><tfoot><tr><th>Total</th><th id="recallPorsi">0,0</th><th id="recallE">0,0</th><th id="recallP">0,0</th><th id="recallL">0,0</th><th id="recallK">0,0</th></tr></tfoot></table></div></section>
+  </div>
+</section>
+<section class="tab-panel " id="tab-cairan">
+  <div class="section-body">
+<section class="card"><h2>Holiday Segar</h2><div class="grid two"><label>BB<input id="holBb" type="number" value="60"></label><label>Total (ml)<input id="holTotal" readonly></label></div></section>
+<section class="card"><h2>Cairan Khusus</h2><div class="grid four"><label>BB<input id="khBb" type="number" value="60"></label><label>Kategori ml/kg<select id="khMl"><option>30</option><option>35</option><option>40</option></select></label><label>Tambahan<input id="khTambah" type="number" value="0"></label><label>Total (ml)<input id="khTotal" readonly></label></div></section>
+<section class="card"><h2>CKD</h2><div class="grid two"><label>Urine 24 jam<input id="ckdUrine" type="number" value="1200"></label><label>Total urine + 500 ml<input id="ckdTotal" readonly></label></div></section>
+<section class="card"><h2>IWL BB</h2><div class="grid three"><label>BB<input id="iwlBb" type="number" value="12"></label><label>Suhu<input id="iwlSuhu" type="number" step="0.1" value="37"></label><label>Total<input id="iwlTotal" readonly></label></div></section>
+<section class="card"><h2>IWL BSA</h2><div class="grid four"><label>BB<input id="bsaBb" type="number" step="0.1" value="48.8"></label><label>TB<input id="bsaTb" type="number" step="0.1" value="158"></label><label>Suhu<input id="bsaSuhu" type="number" step="0.1" value="37"></label><label>Total<input id="bsaTotal" readonly></label></div></section>
+<section class="card"><h2>Kalkulator Infus & GIR</h2><div class="grid four"><label>TPM<input id="tpm" type="number" value="15"></label><label>Tetes<select id="tetes"><option value="20">20 gtt/ml</option><option value="60">60 gtt/ml</option></select></label><label>Total ml/24 jam<input id="tpmTotal" readonly></label><label>% Dex<input id="girDex" type="number" value="10"></label><label>Laju ml/jam<input id="girLaju" type="number" value="30"></label><label>BB<input id="girBb" type="number" value="3"></label><label>GIR<input id="girHasil" readonly></label></div></section>
+  </div>
+</section>
+<section class="tab-panel " id="tab-pemenuhan">
+  <div class="section-body">
+<section class="card"><h2>% Pemenuhan Kebutuhan Pasien</h2><div class="table-wrap"><table><thead><tr><th>Komponen</th><th>Energi (kkal)</th><th>Protein (gr)</th><th>Lemak (gr)</th><th>KH (gr)</th></tr></thead><tbody id="monitorRows"></tbody></table></div></section>
+  </div>
+</section>
+<section class="tab-panel " id="tab-diabetes">
+  <div class="section-body">
+<section class="card"><h2>Diabetes PERKENI</h2><div class="grid four"><label>Jenis Kelamin<select id="dmJk"><option>Laki-laki</option><option>Perempuan</option></select></label><label>BB<input id="dmBb" type="number" value="60"></label><label>Protein g/kg<input id="dmProtKg" type="number" step="0.1" value="1"></label><label>Lemak %<input id="dmLemakPct" type="number" value="25"></label><label>Koreksi usia<select id="dmUsia"><option value="0">Tidak menggunakan</option><option value="-5">40–59 tahun</option><option value="-10">60–69 tahun</option><option value="-20">≥70 tahun</option></select></label><label>Aktivitas<select id="dmAkt"><option value="10">Ringan +10%</option><option value="20">Sedang +20%</option><option value="30">Berat +30%</option><option value="40">Sangat berat +40%</option><option value="50">Ekstra +50%</option></select></label><label>Demam<select id="dmDemam"><option value="0">Tidak</option><option value="13">Ya +13%</option></select></label><label>Koreksi BB<select id="dmBbKor"><option value="0">Tidak</option><option value="25">Kurus +25%</option><option value="-25">Gemuk -25%</option></select></label></div><div class="mini-results"><div>Energi <b id="dmE">0</b> kkal</div><div>Protein <b id="dmP">0</b> g</div><div>Lemak <b id="dmL">0</b> g</div><div>KH <b id="dmK">0</b> g</div><button onclick="useNeed('dm')">Gunakan sebagai kebutuhan pasien</button></div></section>
+<section class="card"><h2>Insulin Counting</h2><div class="table-wrap"><table><thead><tr><th>Waktu</th><th>KH (g)</th><th>Rasio insulin</th><th>Unit insulin</th></tr></thead><tbody id="insulinRows"></tbody><tfoot><tr><th>Total</th><th id="insKhTotal">0,0</th><th></th><th id="insUnitTotal">0,0</th></tr></tfoot></table></div></section>
+  </div>
+</section>
+</main>
+<footer>NUTRICALC Web v1 — section utama: Antropometri, Kebutuhan Gizi, Asupan, Cairan, % Pemenuhan, Diabetes, Insulin.</footer>
+<script src="app.js"></script>
+<script>if ("serviceWorker" in navigator) { navigator.serviceWorker.register("service-worker.js").catch(()=>{}); }</script>
+
+<script>
+  // Login sederhana untuk membatasi akses umum.
+  // Silakan ubah username dan password di bawah ini bila diperlukan.
+  const NUTRICALC_USERNAME = "gizi";
+  const NUTRICALC_PASSWORD = "AF2026";
+
+  function loginNutricalc(){
+    const user = (document.getElementById("loginUser")?.value || "").trim();
+    const pass = document.getElementById("loginPass")?.value || "";
+    const error = document.getElementById("loginError");
+
+    if(user === NUTRICALC_USERNAME && pass === NUTRICALC_PASSWORD){
+      sessionStorage.setItem("nutricalc_logged_in", "true");
+      document.getElementById("loginScreen").style.display = "none";
+      if(error) error.textContent = "";
+    }else{
+      if(error) error.textContent = "Username atau password salah.";
+    }
+  }
+
+  function logoutNutricalc(){
+    sessionStorage.removeItem("nutricalc_logged_in");
+    location.reload();
+  }
+
+  window.addEventListener("load", function(){
+    const loginScreen = document.getElementById("loginScreen");
+    if(sessionStorage.getItem("nutricalc_logged_in") === "true" && loginScreen){
+      loginScreen.style.display = "none";
+    }
+
+    const passInput = document.getElementById("loginPass");
+    const userInput = document.getElementById("loginUser");
+    [userInput, passInput].forEach(function(input){
+      if(input){
+        input.addEventListener("keydown", function(event){
+          if(event.key === "Enter") loginNutricalc();
+        });
+      }
+    });
+  });
+</script>
+</body>
+</html>
